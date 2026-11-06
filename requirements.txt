@@ -1,0 +1,2 @@
+# Runtime uses only Python 3.11+ standard library.
+# Install Ollama separately: https://ollama.com/

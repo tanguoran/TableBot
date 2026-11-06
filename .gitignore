@@ -1,0 +1,31 @@
+# Local configuration, API keys and runtime data.
+.env
+.env.*
+!.env.example
+/data/
+*.db
+*.db-shm
+*.db-wal
+
+# Python and local editor state.
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+/.vscode/
+
+# Knowledge notes are local by default. Keep the example and the external
+# knowledge submodule; add other shared documents explicitly with git add -f.
+/knowledge/*
+!/knowledge/README.md
+!/knowledge/示例-机器人使用指南.md
+!/knowledge/dnd-expansions/
+
+.DS_Store
+Thumbs.db
+

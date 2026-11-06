@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "whale-desktop": {
+      "command": "wsl.exe",
+      "args": [
+        "--distribution", "Ubuntu",
+        "--cd", "C:\\Users\\user\\Documents\\个人资料\\持续学习\\代码\\TableBot",
+        "--exec", "python3", "-m", "jarvis.desktop_mcp"
+      ]
+    }
+  }
+}

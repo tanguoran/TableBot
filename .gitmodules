@@ -1,0 +1,6 @@
+[submodule "desktop"]
+	path = desktop
+	url = ./desktop
+[submodule "knowledge-dnd-expansions"]
+	path = knowledge/dnd-expansions
+	url = https://github.com/CharlietheACE/dnd-expansions.git
