@@ -39,12 +39,16 @@ TableBot/                         Git 主仓库：模型调用、Agent、系统�
 先确保 Git、Git LFS 已安装，且 Git 能使用有访问权限的 GitHub 账号认证。在 PowerShell 中执行：
 
 ```powershell
-git clone --recurse-submodules https://github.com/tanguoran/TableBot.git
+git -c core.longpaths=true clone --recurse-submodules https://github.com/tanguoran/TableBot.git
 cd TableBot
+git config core.longpaths true
+git submodule foreach --recursive 'git config core.longpaths true'
 git -C desktop lfs pull
 ```
 
 主仓库会还原它记录的桌面和知识库提交。知识库从原上游获取；两个私有仓库使用当前账号的认证权限。克隆会获取桌面 LFS 资产，初次下载量约为 3.1 GiB。
+
+知识库和 Unity 项目包含较深的目录。`core.longpaths=true` 用于避免 Windows 长路径导致的 checkout 失败；克隆时的 `-c` 同时传给本次操作中的子模块，随后各仓库的本地配置用于后续更新。这些命令不修改全局 Git 配置。
 
 克隆后复制 `.env.example` 为 `.env` 并配置密钥；本地数据库和个人笔记不会随克隆传递。不要直接把包含 LFS 指针的工作树作为可运行 Unity 项目；确认 `git -C desktop lfs pull` 完成。
 
@@ -53,7 +57,7 @@ git -C desktop lfs pull
 ```powershell
 git pull --ff-only
 git submodule sync --recursive
-git submodule update --init --recursive
+git -c core.longpaths=true submodule update --init --recursive
 git -C desktop lfs pull
 ```
 

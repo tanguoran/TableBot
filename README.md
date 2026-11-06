@@ -5,7 +5,7 @@
 主仓库：<https://github.com/tanguoran/TableBot>；桌面仓库：<https://github.com/tanguoran/TableBot-Desktop>。两个仓库均为私有仓库，需使用有权限的 GitHub 账号并安装 Git LFS。获取完整工作区：
 
 ```powershell
-git clone --recurse-submodules https://github.com/tanguoran/TableBot.git
+git -c core.longpaths=true clone --recurse-submodules https://github.com/tanguoran/TableBot.git
 cd TableBot
 ```
 
