@@ -1,6 +1,13 @@
 # JARVIS-M1 · Phase 1
 
-本仓库管理模型调用、Python Agent 与系统集成；`desktop/` 为独立 Unity 桌面子模块，`knowledge/dnd-expansions/` 为已有外部知识库子模块，两者并列。仓库关系、本地克隆、Git LFS 与提交顺序见 [仓库与子模块说明](docs/repository-layout.md)。密钥、数据库、Unity 缓存和个人知识笔记不纳入版本控制。
+本仓库管理模型调用、Python Agent 与系统集成；`desktop/` 为独立 Unity 桌面子模块，`knowledge/dnd-expansions/` 为已有外部知识库子模块，两者并列。仓库关系、克隆、Git LFS 与提交顺序见 [仓库与子模块说明](docs/repository-layout.md)。密钥、数据库、Unity 缓存和个人知识笔记不纳入版本控制。
+
+主仓库：<https://github.com/tanguoran/TableBot>；桌面仓库：<https://github.com/tanguoran/TableBot-Desktop>。两个仓库均为私有仓库，需使用有权限的 GitHub 账号并安装 Git LFS。获取完整工作区：
+
+```powershell
+git clone --recurse-submodules https://github.com/tanguoran/TableBot.git
+cd TableBot
+```
 
 本地优先的纯软件 AI 管家：**Python + Ollama + Qwen3.5 + Tool Calling + SQLite**。
 可选 DeepSeek Flash API：聊天与自主规划可通过 `.env` 一项切换，知识库共用本地向量索引，见 [模型切换说明](docs/model-providers.md)。

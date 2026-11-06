@@ -27,25 +27,37 @@ TableBot/                         Git 主仓库：模型调用、Agent、系统�
 
 ## 当前远程状态
 
-主仓库和桌面仓库目前仅在本机创建，未创建 GitHub 仓库，也未上传任何内容。
+主仓库和桌面仓库分别使用以下 GitHub 私有仓库。克隆、拉取和推送需要有访问权限的 GitHub 账号：
 
-- 桌面的 `.gitmodules` URL 为 `./desktop`，用于从当前本地工作区克隆。它指向源工作区中的桌面 Git 仓库，不是 GitHub 地址。
+- 主仓库：`https://github.com/tanguoran/TableBot.git`。
+- 桌面仓库：`https://github.com/tanguoran/TableBot-Desktop.git`；`.gitmodules` 使用这个 HTTPS 地址，不依赖本机路径。
 - 知识库 URL 保持为 `https://github.com/CharlietheACE/dnd-expansions.git`，固定在初始化时已有的提交，不自动升级，也不改写知识库历史。
-- Git LFS 对象目前在本地桌面仓库中。Git 子模块的提交指针不包含这些二进制对象，备份时需要保留完整的 Git/LFS 数据，不能只复制主仓库的提交。
+- 桌面二进制资产由桌面仓库的 Git LFS 管理。主仓库中的子模块指针只记录桌面的提交 SHA；推送顺序应为桌面及其 LFS 对象在前，主仓库在后。
 
-## 从本机克隆
+## 从 GitHub 克隆
 
-先确保 Windows Git 和 Git LFS 已安装。在 PowerShell 中设置源路径与一个尚不存在的目标路径：
+先确保 Git、Git LFS 已安装，且 Git 能使用有访问权限的 GitHub 账号认证。在 PowerShell 中执行：
 
 ```powershell
-$source = 'C:\你的路径\TableBot'
-$target = 'C:\你的路径\TableBot-copy'
-git -c protocol.file.allow=always clone --recurse-submodules $source $target
+git clone --recurse-submodules https://github.com/tanguoran/TableBot.git
+cd TableBot
+git -C desktop lfs pull
 ```
 
-`protocol.file.allow=always` 仅对此命令开放本地子模块来源，不修改全局 Git 安全配置。知识库默认从原远程获取，需要网络。
+主仓库会还原它记录的桌面和知识库提交。知识库从原上游获取；两个私有仓库使用当前账号的认证权限。克隆会获取桌面 LFS 资产，初次下载量约为 3.1 GiB。
 
 克隆后复制 `.env.example` 为 `.env` 并配置密钥；本地数据库和个人笔记不会随克隆传递。不要直接把包含 LFS 指针的工作树作为可运行 Unity 项目；确认 `git -C desktop lfs pull` 完成。
+
+已有工作区可先拉取主仓库，再同步子模块地址并还原固定版本：
+
+```powershell
+git pull --ff-only
+git submodule sync --recursive
+git submodule update --init --recursive
+git -C desktop lfs pull
+```
+
+这些更新操作前应先保存或提交本地改动。如果只需要模型侧源码，可不使用 `--recurse-submodules`，然后按需初始化知识库；没有桌面子模块时，桌面相关功能不可用。
 
 ## 修改、提交与更新
 
@@ -55,8 +67,10 @@ git -c protocol.file.allow=always clone --recurse-submodules $source $target
 git -C desktop switch main
 git -C desktop add .
 git -C desktop commit -m "Describe the desktop change"
+git -C desktop push origin main
 git add desktop
 git commit -m "Update desktop revision"
+git push origin main
 ```
 
 子模块克隆后通常处于 detached HEAD；提交前应切到已有分支或创建工作分支。`git submodule update` 负责恢复主仓库记录的版本，不会自动选择远程最新版本。
@@ -72,27 +86,11 @@ git commit -m "Update knowledge revision"
 
 在更新或切换子模块版本前，先提交或保存该子模块中的本地修改。
 
-## 以后连接远程仓库
+## 远程地址与边界
 
-已有主仓库和桌面仓库的真实远程地址后，从根目录配置：
+根仓库的 `origin` 指向 `tanguoran/TableBot`，桌面子模块的 `origin` 指向 `tanguoran/TableBot-Desktop`。两者分别提交和推送，不使用强制推送，也不把第三方知识库推送到这两个仓库。
 
-```powershell
-git remote add origin <主仓库URL>
-git -C desktop remote add origin <桌面仓库URL>
-git submodule set-url desktop <桌面仓库URL>
-git submodule sync --recursive
-git add .gitmodules
-git commit -m "Configure desktop remote"
-```
-
-先推送桌面仓库及其 LFS 对象，确认子模块提交可获取，再推送主仓库：
-
-```powershell
-git -C desktop push -u origin main
-git push -u origin main
-```
-
-之后使用 `git clone --recurse-submodules <主仓库URL>` 获取完整工作区。不要将本地 `./desktop` URL 原样用于远程发布；也不要将第三方知识库的 origin 改成主仓库地址。
+如将来迁移桌面仓库，需要使用 `git submodule set-url desktop <新URL>`，再提交 `.gitmodules` 的变更。不要只修改某台机器的 `.git/config`，否则其他克隆仍会使用旧地址。
 
 ## 日常检查
 
